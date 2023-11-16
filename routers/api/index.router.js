@@ -17,7 +17,7 @@ const publicRouter = (req,res,next)=>{
 }
 
 router.get('/profile', privateRouter ,(req, res) => {
-  res.render('profile', {user: req.session.user})
+  res.render('/api/products', {user: req.session.user})
 });
 
 router.get('/login', publicRouter, (req, res) => {
