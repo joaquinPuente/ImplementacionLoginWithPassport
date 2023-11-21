@@ -54,15 +54,14 @@ export const init = () => {
     passport.use('github', new GithubStrategy(githubOptions, async (accessToken, refreshToken, profile, done)=>{
         console.log('profile',profile);
         const email = profile._json.email;
-        console.log("github email:::>",email);
-        let user = await userModel.findOne({email : email});
+        let user = await userModel.findOne({email: email});
         if(user){
             return done(null,user);
         }
         user = {
             first_name: profile._json.name,
             last_name: '',
-            email,
+            email: email,
             age: 18,
             password: '',
             provider:'Github',

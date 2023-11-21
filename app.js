@@ -12,7 +12,7 @@ import mongoStore from 'connect-mongo'
 import path from 'path';
 import { __dirname } from './utils.js';
 import handlebars from 'express-handlebars';
-import { URI } from "../../hands-on-lab/hands-on-lab/src/db/mongodb.js";
+import { URI } from "../src/db/mongoDB.js";
 import { init as initPassportConfig } from './config/passport.config.js';
 
 const app = express();
@@ -29,12 +29,11 @@ app.use(ExpressSession({
   }),
   })
 )
-// Configura Express normalmente
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-
-
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', path.join(__dirname, 'views'));
