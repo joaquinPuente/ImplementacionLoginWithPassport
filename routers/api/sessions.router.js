@@ -1,31 +1,35 @@
 import { Router } from "express";
+import passport from 'passport'
+import { createHash, isValidPassword } from "../../utils.js";
 import userModel from "../../models/user.model.js";
 
 const router = Router();
 
-router.post('/sessions', async (req,res)=>{
-    const { body } = req;
-    const newUser = await userModel.create(body);
-    console.log(newUser);
+router.post('/sessions', passport.authenticate('register', { failureRedirect: '/register' }) ,async (req,res)=>{
     res.redirect('/login')
 })
 
-router.post('/login', async (req,res)=>{
-    const { body: { email , password} } = req;
-    const usuario = await userModel.findOne({ email });
-    
-    if(!usuario){
-        return res.status(401).send('Correo o contraseña invalido')
-    }
-    const isPassValid = usuario.password === password;
-    if(!isPassValid){
-        return res.status(401).send('Correo o contraseña invalido')
-    }
-
-    const { first_name, last_name, user } = usuario;
-    req.session.user={ first_name, last_name, user };
-
+router.post('/login', passport.authenticate('login', { failureRedirect: '/login' }) ,async (req,res)=>{
+    req.session.user = req.user;
     res.redirect('/api/products')
+})
+
+router.get('/session/github', passport.authenticate('github', {scope: ['user.email']}  ))
+
+router.get('/api/session/github-callback', passport.authenticate('github',{failureRedirect:'/login'}), (req,res)=>{
+    console.log('req.user', req.user);
+    req.session.user = req.user;
+    res.redirect('/api/products')
+})
+
+router.post('/recovery', async (req,res)=>{
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email });
+    if(!user){
+        return res.status(401).send('Correo o contraseña invalido')
+    }
+    await userModel.updateOne({email},{$set: {password:createHash(password)} })
+    res.redirect('/login')
 })
 
 router.get('/logout', (req,res) =>{

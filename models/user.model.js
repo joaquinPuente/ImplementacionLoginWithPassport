@@ -6,7 +6,8 @@ const userSchema = mongoose.Schema({
     email: {type:String, unique:true} ,
     age: Number,
     password: String ,
-    user: String
+    user: String,
+    provider: String,
 },{timestamps:true});
 
 export default mongoose.model('User', userSchema)

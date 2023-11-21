@@ -11,7 +11,7 @@ const privateRouter = (req,res,next)=>{
 
 const publicRouter = (req,res,next)=>{
   if(req.session.user){
-    return res.redirect('/profile')
+    return res.redirect('/api/products')
   }
   next();
 }
@@ -26,6 +26,10 @@ router.get('/login', publicRouter, (req, res) => {
 
 router.get('/register', publicRouter, (req, res) => {
   res.render('register')
+});
+
+router.get('/recovery', publicRouter, (req, res) => {
+  res.render('recovery')
 });
 
 export default router;

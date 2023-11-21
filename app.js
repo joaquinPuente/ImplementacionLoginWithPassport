@@ -1,5 +1,6 @@
 // Importa las bibliotecas necesarias
 import express from "express";
+import passport from 'passport'
 import homeRouter from './routers/api/home.router.js';
 import productRouter from './routers/api/products.router.js';
 import cartRouter from './routers/api/cart.router.js';
@@ -12,6 +13,7 @@ import path from 'path';
 import { __dirname } from './utils.js';
 import handlebars from 'express-handlebars';
 import { URI } from "../../hands-on-lab/hands-on-lab/src/db/mongodb.js";
+import { init as initPassportConfig } from './config/passport.config.js';
 
 const app = express();
 const secret = 'coder123'
@@ -32,9 +34,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
+
+
 app.engine('handlebars', handlebars.engine());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
+
+initPassportConfig()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use('/', homeRouter, indexRouter, sessionRouter);
 app.use('/api', productRouter);
